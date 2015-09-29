@@ -1,9 +1,10 @@
 # This is a template for a Ruby scraper on morph.io (https://morph.io)
 # including some code snippets below that you should find helpful
 
-require 'scraperwiki'
+
 require 'nokogiri'
 require 'open-uri'
+require_relative 'lib/player'
 # require 'mechanize'
 #
 # agent = Mechanize.new
@@ -37,8 +38,7 @@ nations.each do |nation|
   table = doc.xpath("//*[@id='#{nation.gsub(/\s/, "_")}']/../following-sibling::table[1]")
   rows = table.css("table.wikitable tr.agent")
   rows.each do |row|
-    name = row.css(".vcard a").first.text
-    link = "https://en.wikipedia.org" + row.css(".vcard a").first['href']
-    ScraperWiki.save_sqlite(["name", "nation"], {"name" => name, "link" => link, "nation" => nation})
+    player = Player.new(nation, row)
+    player.save!
   end
 end
