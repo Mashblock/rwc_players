@@ -1,7 +1,7 @@
 require 'scraperwiki'
 
 class Player
-  LOCKED_NATIONS = ["New Zealand", "France", "Ireland"]
+  LOCKED_NATIONS = ["New Zealand", "France", "Ireland", "England"]
 
   def initialize(nation, row)
     @nation = nation
@@ -10,7 +10,7 @@ class Player
 
   def as_json
     { name: name, link: link, nation: @nation, date_of_birth: date_of_birth,
-      club_nation: club_nation }
+      club: club, caps: caps, club_nation: club_nation }
   end
 
   def save!
@@ -28,7 +28,15 @@ class Player
   def club_nation
     return @nation if LOCKED_NATIONS.include?(@nation)
     return nil unless @row.css("span.flagicon a").length > 0
-    @row.css("span.flagicon a").first['title']
+    @row.css("span.flagicon a").first['title'].gsub('(country)', '').strip
+  end
+
+  def caps
+    @row.css("td")[3].text.to_i
+  end
+
+  def club
+    @row.css("td")[4].text
   end
 
   def date_of_birth
