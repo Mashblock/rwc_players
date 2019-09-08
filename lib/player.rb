@@ -1,15 +1,13 @@
 require 'scraperwiki'
 
 class Player
-  LOCKED_NATIONS = ["New Zealand", "France", "Ireland", "England"]
-
   def initialize(nation, row)
     @nation = nation
     @row = row
   end
 
   def as_json
-    { name: name, link: link, nation: @nation, date_of_birth: date_of_birth,
+    { name: name, nation: @nation, date_of_birth: date_of_birth,
       club: club, caps: caps, club_nation: club_nation }
   end
 
@@ -18,16 +16,15 @@ class Player
   end
 
   def name
-    @row.css(".vcard a").first.text
+    @row.css("td")[0].text.strip
   end
 
-  def link
-    "https://en.wikipedia.org" + @row.css(".vcard a").first['href']
-  end
+  # def link
+  #   "https://en.wikipedia.org" + @row.css(".vcard a").first['href']
+  # end
 
   def club_nation
-    return @nation if LOCKED_NATIONS.include?(@nation)
-    return nil unless @row.css("span.flagicon a").length > 0
+    return @nation unless @row.css("span.flagicon a").length > 0
     @row.css("span.flagicon a").first['title'].gsub('(country)', '').strip
   end
 
@@ -36,11 +33,13 @@ class Player
   end
 
   def club
-    @row.css("td")[4].text
+    @row.css("td")[4].text.strip
   end
 
   def date_of_birth
-    return nil unless @row.css("span.bday").length > 0
-    Date.parse(@row.css("span.bday").first.text)
+    dob = @row.css("td")[2].text.gsub(/([0-9]{,2}\s\w*\s[0-9]{4})/, "$1")
+    Date.parse(dob)
+  rescue ArgumentError
+    nil
   end
 end
