@@ -1,9 +1,10 @@
 # This is a template for a Ruby scraper on morph.io (https://morph.io)
 # including some code snippets below that you should find helpful
 
-
+require 'json'
 require 'nokogiri'
 require 'open-uri'
+
 require_relative 'lib/player'
 # require 'mechanize'
 #
@@ -27,12 +28,12 @@ require_relative 'lib/player'
 # called "data.sqlite" in the current working directory which has at least a table
 # called "data".
 
-nations = ["Australia", "England", "Fiji", "Uruguay", "Wales", "Japan", "Samoa",
-  "Scotland", "South Africa", "United States", "Argentina", "Georgia",
-  "Namibia", "New Zealand", "Tonga", "Canada", "France", "Ireland", "Italy",
-  "Romania"]
+nations = ["Argentina", "Australia", "Canada", "England", "Fiji", "France",
+  "Georgia", "Ireland", "Italy", "Japan", "Namibia", "New Zealand", "Russia",
+  "Samoa", "Scotland", "South Africa", "Tonga", "United States", "Uruguay",
+  "Wales"]
 
-doc = Nokogiri::HTML(open("https://en.wikipedia.org/wiki/2015_Rugby_World_Cup_squads"))
+doc = Nokogiri::HTML(open("https://en.wikipedia.org/wiki/2019_Rugby_World_Cup_squads"))
 
 nations.each do |nation|
   table = doc.xpath("//*[@id='#{nation.gsub(/\s/, "_")}']/../following-sibling::table[1]")
